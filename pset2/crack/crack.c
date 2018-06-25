@@ -1,11 +1,23 @@
 #define _XOPEN_SOURCE
-//#include <crypt.h>  needed or not ?
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <cs50.h>
 #include <unistd.h>
+
+// test2func - clears test2 string by loading it with '\0'
+// then it copies 'w' characters from 'test' string into 'test2'
+// so that strings containing less than five chars can be hashed and tested
+int test2func(string a, string b, int w, int x)
+{
+    for (int z = 0; z < x; z++)
+    {
+        a[z] = '\0';
+    }
+    strncpy(a, b, w);
+    return 0;
+}
 
 int main(int argc, string argv[])
 {
@@ -16,105 +28,73 @@ int main(int argc, string argv[])
         return 1;
     }
 
-    int c = 51;             // number of loops for each character / size of the array
-    char test[6] = {'A', 'A', 'A', 'A', 'A', '\0'};
-    char test2[5];          // string that is used for less than five characters
-    char salt[2];           // string used to store 'salt'
+    char test[6] = "AAAAA";                 // initial test password string
+    char test2[5];                          // string that is used for less than five characters
+    char salt[3];                           // string used to store 'salt'
+    // all characters that will be used to crack the passwd
+    char characters[53] = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 
-    memset(test2, '\0', sizeof(test2));     // setting memory to \0
-    memset(salt, '\0', sizeof(salt));       // setting memory to \0
+    int c = strlen(characters);             // number of loops for each character / size of the array (A-Z + a-z, counting from zero)
+    int x = 5;                              // length of test2 / maximum length of password
 
-    strncpy(salt, argv[1], 2);              // extracting 'salt' from the hash key
+    string hash = argv[1];                  // hash provided as argument from command line
 
-    for (int i = 0; i < c; i++)
+    memset(salt, '\0', sizeof(salt));               // setting memory to '\0' for 'salt'
+    strncpy(salt, hash, 2);                         // extracting 'salt' from the hash key and assigning to 'salt'
+
+    // 'for' loops checking every possible iteration of every character (A-Za-z)
+    for (int i = 0; i < c; i++)                     // iterating character #1 in the string 'test' -> *AAAA
     {
-        for (int j = 0; j < c; j++)
+        for (int j = 0; j < c; j++)                 // iterating character #2 in the string 'test' -> A*AAA
         {
-            for (int k = 0; k < c; k++)
+            for (int k = 0; k < c; k++)             // iterating character #3 in the string 'test' -> AA*AA
             {
-                for (int l = 0; l < c; l++)
+                for (int l = 0; l < c; l++)         // iterating character #4 in the string 'test' -> AAA*A
                 {
-                    for (int m = 0; m < c; m++)
+                    for (int m = 0; m < c; m++)     // iterating character #5 in the string 'test' -> AAAA*
                     {
-                        if (strcmp(crypt(test, salt), argv[1]) == 0)
+                        test[4] = characters[m];
+                        if (strcmp(crypt(test, salt), hash) == 0)
                         {
                             printf("%s\n", test);
                             exit(0);
                         }
-                        test[4] += 1;
-                        if (m == 25)        // shift to lower case by skipping ASCII characters 91-96
-                        {
-                            test[4] += 6;
-                        }
                     }
-                    if (strcmp(crypt(strncpy(test2, test, 4), salt), argv[1]) == 0)
+                    test2func(test2, test, 4, x);
+                    if (strcmp(crypt(test2, salt), hash) == 0)
                     {
                         printf("%s\n", test2);
                         exit(0);
                     }
-                    if (strcmp(crypt(test, salt), argv[1]) == 0)
-                    {
-                        printf("%s\n", test);
-                        exit(0);
-                    }
-                    test[4] = 'A';
-                    test[3] += 1;
-                    if (l == 25)        // shift to lower case by skipping ASCII characters 91-96
-                    {
-                        test[3] += 6;
-                    }
+                    test[4] = characters[0];
+                    test[3]++;
                 }
-                if (strcmp(crypt(strncpy(test2, test, 3), salt), argv[1]) == 0)
+                test2func(test2, test, 3, x);
+                if (strcmp(crypt(test2, salt), hash) == 0)
                 {
                     printf("%s\n", test2);
                     exit(0);
                 }
-                if (strcmp(crypt(test, salt), argv[1]) == 0)
-                {
-                    printf("%s\n", test);
-                    exit(0);
-                }
-                test[3] = 'A';
-                test[2] += 1;
-                if (k == 25)        // shift to lower case by skipping ASCII characters 91-96
-                {
-                    test[2] += 6;
-                }
+                test[3] = characters[0];
+                test[2]++;
             }
-            if (strcmp(crypt(strncpy(test2, test, 2), salt), argv[1]) == 0)
+            test2func(test2, test, 2, x);
+            if (strcmp(crypt(test2, salt), hash) == 0)
             {
                 printf("%s\n", test2);
                 exit(0);
             }
-            if (strcmp(crypt(test, salt), argv[1]) == 0)
-            {
-                printf("%s\n", test);
-                exit(0);
-            }
-            test[2] = 'A';
-            test[1] += 1;
-            if (j == 25)        // shift to lower case by skipping ASCII characters 91-96
-            {
-                test[1] += 6;
-            }
+            test[2] = characters[0];
+            test[1]++;
         }
-        if (strcmp(crypt(strncpy(test2, test, 1), salt), argv[1]) == 0)
+        test2func(test2, test, 1, x);
+        if (strcmp(crypt(test2, salt), hash) == 0)
         {
             printf("%s\n", test2);
             exit(0);
         }
-        if (strcmp(crypt(test, salt), argv[1]) == 0)
-        {
-            printf("%s\n", test);
-            exit(0);
-        }
-        test[1] = 'A';
-        test[0] += 1;
-        if (i == 25)        // shift to lower case by skipping ASCII characters 91-96
-        {
-            test[0] += 6;
-        }
-        printf(" #### ");
+        test[1] = characters[0];
+        test[0]++;
     }
     return 0;
 }
