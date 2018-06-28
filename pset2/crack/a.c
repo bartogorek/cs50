@@ -7,7 +7,6 @@
 #include <cs50.h>
 #include <unistd.h>
 
-
 int main(void)
 {
     char test[4] = "bart";

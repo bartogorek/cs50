@@ -14,10 +14,10 @@ int main(int argc, string argv[])
     printf("Args: %i\n", argc);
     //char input[6] = {'A', 'A', 'A', 'A', 'A', '\0'};
 
-    char salt[2];
+    char salt[4];
     memset(salt, '\0', sizeof(salt));     // setting memory to \0
 
-    strncpy(salt, argv[1], 2);
+    strncpy(salt, argv[1], 3);
     printf("Salt: %s\n", salt);
     string output = crypt(input, salt);
     printf("%s\n", output);
