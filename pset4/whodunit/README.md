@@ -48,7 +48,7 @@ one byte for green, one byte for blue)
 
 ## What value does line 63 of `copy.c` assign to `padding` if `bi.biWidth` is `3`?
 
-The value assigned to padding is 0.
+The value assigned to padding is 3.
 
 ## What does `fseek` do?
 
