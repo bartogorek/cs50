@@ -70,12 +70,12 @@ int main(int argc, string argv[])
     // 'for' loops checking every possible iteration of every character (passwd_string2-Za-z)
     for (int i = 0; i < chars_size; i++)                     // iterating character #1 in the string 'passwd_string1' -> *AAAA
     {
-        for (int j = 0; j < chars_size; j++)                 // iterating character #2 in the string 'passwd_string1' -> passwd_string2*AAA
+        for (int j = 0; j < chars_size; j++)                 // iterating character #2 in the string 'passwd_string1' -> A*AAA
         {
             for (int k = 0; k < chars_size; k++)             // iterating character #3 in the string 'passwd_string1' -> AA*AA
             {
-                for (int l = 0; l < chars_size; l++)         // iterating character #4 in the string 'passwd_string1' -> AAA*passwd_string2
-                {
+                for (int l = 0; l < chars_size; l++)         // iterating character #4 in the string 'passwd_string1' -> AAA*A
+
                     for (int m = 0; m < chars_size; m++)     // iterating character #5 in the string 'passwd_string1' -> AAAA*
                     {
                         passwd_string1[4] = characters[m];
